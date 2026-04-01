@@ -1,14 +1,13 @@
 trigger:
 - main
 
-pool:
-  name: Default
+pool: Default
 
 steps:
-- script: echo HelloWorld
-  displayName: 'Run a one-line script'
+- script: echo Hola!
+  displayName: Waving
 
 - script: |
-    echo This is just a test
-    echo This is just a second test
-  displayName: Display testing messages
+    HolaHola
+    HolaholaHola
+  displayName: WavingTwice
