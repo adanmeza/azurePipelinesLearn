@@ -2,7 +2,7 @@ trigger:
 - main
 
 pool:
-  vmImage: busybox
+  vmImage: azure-learning
 
 steps:
 - script: echo HelloWorld
