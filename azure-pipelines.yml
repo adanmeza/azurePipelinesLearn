@@ -1,0 +1,14 @@
+trigger:
+- main
+
+pool:
+  vmImage: busybox
+
+steps:
+- script: echo HelloWorld
+  displayName: 'Run a one-line script'
+
+- script: |
+    echo This is just a test
+    echo This is just a second test
+  displayName: Display testing messages
