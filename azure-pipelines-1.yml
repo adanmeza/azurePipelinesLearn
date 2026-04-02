@@ -1,31 +1,30 @@
 trigger:
 - main
 
+variables:
+- name: firstVariable
+  value: 1
+- name: secondVariable
+  value: 2
+
 pool:
   name: Default
 
-variables:
-- name: firstValue
-  value: valueOne
-- name: secondValue
-  value: valueTwo
-
-stages: 
+stages:
 - stage: Build
-  displayName: 'Showing first variable'
+  displayName: 'Stage 1'
   jobs:
   - job: FirstJob
-    displayName: 'First variable job'
-    steps:
+    displayName: 'First Job'
+    steps: 
     - script: |
-        echo "This is my first variable $(valueOne)"
-      displayName: 'First script'
-- stage: Deploy
-  displayName: 'Showing second value'
+        echo "First variable: $(firstVariable)"
+- stage: Test
+  displayName: 'Stage 2'
+  dependsOn: Build
   jobs:
-  - job: SecondJob
-    displayName: 'Second variable job'
+  - job: scondJob
+    displayName: 'Second Job'
     steps:
     - script: |
-        echo "This is my second variable $(valueTwo)"
-      displayName: "Second script"
+        echo "Second variable: $(secondVariable)"
