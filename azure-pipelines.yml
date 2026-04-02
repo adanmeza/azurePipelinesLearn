@@ -20,18 +20,18 @@ stages:
     - script: |
         echo "Good bye Build"
       displayName: 'Bye Build'
-- stage: Test
-  displayName: 'Test Stage'
+- stage: Deploy
+  displayName: 'Deploy Stage'
   dependsOn: Build
   jobs:
-  - job: TestJob
-    displayName: 'Test Job'
+  - job: DeployJob
+    displayName: 'Deploy Job'
     steps:
     - script: |
-        echo "${{ variables.greet }} - This is a test job"
-        echo "${{ variables.greet }} - This is a test job"
+        echo "${{ variables.greet }} - This is a deploy job"
+        echo "${{ variables.greet }} - This is a deploy job"
   - job: SecondJob
-    displayName: 'Second Test Job'
+    displayName: 'Second Deploy Job'
     steps:
     - script: |
-        echo "Testing a second job"
+        echo "Testing a second deploy job"
