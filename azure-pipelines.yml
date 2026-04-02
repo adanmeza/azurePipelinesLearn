@@ -1,6 +1,10 @@
 trigger:
 - main
 
+variables:
+  - name: greet
+    value: Hello
+
 pool: Default
 
 stages:
@@ -11,7 +15,7 @@ stages:
     displayName: 'Build Job'
     steps:
     - script: |
-        echo "Hello Build!"
+        echo "${{ variables.greet }} - Build!"
       displayName: 'Waving Build'
     - script: |
         echo "Good bye Build"
@@ -23,8 +27,8 @@ stages:
     displayName: 'Test Job'
     steps:
     - script: |
-        echo "This is a test job"
-        echo "This is a test job"
+        echo "${{ variables.greet }} - This is a test job"
+        echo "${{ variables.greet }} - This is a test job"
   - job: SecondJob
     displayName: 'Second Test Job'
     steps:
