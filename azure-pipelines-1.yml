@@ -1,30 +1,48 @@
 trigger:
 - main
 
-variables:
-- name: firstVariable
-  value: 1
-- name: secondVariable
-  value: 2
-
 pool:
   name: Default
 
+variables:
+- name: env
+  value: dev
+- name: buildVersion
+  value: v1
+
 stages:
 - stage: Build
-  displayName: 'Stage 1'
+  displayName: "Build Stage"
   jobs:
-  - job: FirstJob
-    displayName: 'First Job'
-    steps: 
-    - script: |
-        echo "First variable: $(firstVariable)"
-- stage: Test
-  displayName: 'Stage 2'
-  dependsOn: Build
-  jobs:
-  - job: scondJob
-    displayName: 'Second Job'
+  - job: BuildJob
+    displayName: "Build Job"
     steps:
     - script: |
-        echo "Second variable: $(secondVariable)"
+        echo "Building version $(buildversion)"
+      displayName: "Build Step"
+
+    - script: |
+        echo "##vso[task.setvariable variable=buildVersion]v2"
+      displayName: "Update Version"
+
+- stage: Deploy
+  displayName: "Deploy Stage"
+  dependsOn: Build
+  condition: succeeded()
+
+  jobs:
+  - job: DeployJob
+    displayName: "Deploy Job"
+    steps:
+    - script: |
+        echo "Deploying version ${{ variables.buildVersion }} to $(env)"
+      displayName: "Deploy Step"
+
+  - job: ValidationJob
+    displayName: "Validation Job"
+    dependsOn: DeployJob
+    condition: eq(variables['env'], 'prod')
+    steps:
+      - script: |
+          echo "Running validation in $(env)"
+        displayName: "Validation Step"
