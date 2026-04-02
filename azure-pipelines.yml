@@ -25,3 +25,8 @@ stages:
     - script: |
         echo "This is a test job"
         echo "This is a test job"
+  - job: SecondJob
+    displayName: 'Second Test Job'
+    steps:
+    - script: |
+        echo "Testing a second job"
