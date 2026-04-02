@@ -27,7 +27,7 @@ stages:
   displayName: 'Test stage'
   dependsOn: Build
   variables:
-    stageVersionFromBuild: $[ stageDependencies.Build.BuildJob.outputs['setStageName.stageName'] ]
+    stageVersionFromBuild: $[stageDependencies.Build.BuildJob.outputs['setStageName.stageName']]
   jobs:
   - job: testJob
     displayName: 'Test Job'
