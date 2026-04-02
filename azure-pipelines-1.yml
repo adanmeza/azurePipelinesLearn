@@ -25,16 +25,16 @@ stages:
         echo "Version: $(version)"
         echo "Owner: $(owner)"
     - script: |
-        echo "##vso[task.setVariable, varaible=version]v2"
+        echo "##vso[task.setvariable, variable=version]v2"
       name: changingVersion
       displayName: 'Changing to v2'
     - script: |
-        echo "##vso[task.setVariable, variable=env]lab"
+        echo "##vso[task.setvariable, variable=env]lab"
       name: changingEnv
       displayName: 'Changinv to lab env'
       condition: eq(variables['version'],'v2')
     - script: |
-        echo "##vso[task.setVariable variable=owner]root"
+        echo "##vso[task.setvariable variable=owner]root"
       name: changingOwner
       displayName: 'Changing owner to root'
       condition: and(
