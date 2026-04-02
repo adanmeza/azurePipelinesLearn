@@ -1,0 +1,36 @@
+trigger:
+- main
+
+pool:
+  name: Default
+
+variables:
+- name: passingVariable
+  value: ValueNumberOne
+
+stages:
+- stage: Build
+  displayName: 'Build Stage'
+  jobs:
+  - job: buildJob
+    displayName: 'Build Job'
+    steps:
+    - script: |
+        echo "=== Showing variables ==="
+        echo "Variable: $(passingVariable)"
+        echo "========================="
+    - script: |
+        echo "##vso[task.setvariable variable=passingVariable,isOutput=true]ValueNumberTwo"
+      name: changingVar
+- stage: Test
+  displayName: 'Test Build'
+  variables:
+    chVar: $[stageDependencies.Build.buildJob.outputs['changingVar.passingVariable']]
+  jobs:
+  - job: testJob
+    displayName: 'Test job'
+    steps:
+    - script: |
+        echo "=== Showing variables after change ==="
+        echo "Variable: $(chVar)"
+        echo "========================="
