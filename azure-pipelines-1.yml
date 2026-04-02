@@ -25,7 +25,7 @@ stages:
         echo "Version: $(version)"
         echo "Owner: $(owner)"
     - script: |
-        echo "##vso[task.setVariable, varible=version]v2"
+        echo "##vso[task.setVariable, varaible=version]v2"
       name: changingVersion
       displayName: 'Changing to v2'
     - script: |
