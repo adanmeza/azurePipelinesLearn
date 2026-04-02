@@ -19,12 +19,15 @@ stages:
         echo "Current stage: $(stageName)"
       displayName: 'Showing current stage'
     - script: |
-        echo "##vso[task.setvariable variable=stageName]Test"
+        echo "##vso[task.setvariable variable=stageName,isOutput=true]Test"
+      name: setStageName
       displayName: 'Updating stageName variable'
 
 - stage: Test
   displayName: 'Test stage'
   dependsOn: Build
+  variables:
+    stageVersionFromBuild: $[ stageDependencies.Build.BuildJob.outputs['setStageName.stageName'] ]
   jobs:
   - job: testJob
     displayName: 'Test Job'
