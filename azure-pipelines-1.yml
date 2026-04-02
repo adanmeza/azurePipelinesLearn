@@ -1,0 +1,54 @@
+trigger:
+- main
+
+variables:
+- name: greet
+  value: Hello
+- name: environment
+  value: dev
+
+pool:
+  name: Default
+
+stages:
+- stage: Build
+  displayName: "Build Stage"
+  jobs:
+  - job: BuildJob
+    displayName: "Build Job"
+    steps:
+    - script: |
+        echo "$(greet) - Starting build"
+        echo "Environment is ${{ variables.environment }}"
+      displayName: "Start Build"
+
+    - script: |
+        echo "Compiling..."
+        exit 1
+      displayName: "Compile step"
+
+    - script: |
+        echo "This should not run"
+      displayName: "Post Build Step"
+
+- stage: Deploy
+  displayName: "Deploy Stage"
+  dependsOn: Build
+  condition: succeeded()
+  jobs:
+  - job: DeployJob
+    displayName: "Deploy Job"
+    pool:
+      name: Default
+    steps:
+    - script: |
+        echo "$(greet) deploying to $(environment)"
+      displayName: "Deploy Step"
+
+  - job: ValidationJob
+    displayName: "Validation Job"
+    dependsOn: DeployJob
+    steps:
+    - script: |
+        echo "Validating deployment..."
+        echo "Agent: $(Agent.Name)"
