@@ -5,7 +5,7 @@ pool: Default
 
 stages:
 - stage: Build
-  displayName: 'BuildStage'
+  displayName: 'Build Stage'
   jobs:
   - job: BuildJob
     displayName: 'Build Job'
@@ -16,3 +16,12 @@ stages:
     - script: |
         echo "Good bye Build"
       displayName: 'Bye Build'
+- stage: Test
+  displayName: 'Test Stage'
+  jobs:
+  - job: TestJob
+    displayName: 'Test Job'
+    steps:
+    - script: |
+        echo "This is a test job"
+        echo "This is a test job"
