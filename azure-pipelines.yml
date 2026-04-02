@@ -8,6 +8,6 @@ steps:
   displayName: Waving
 
 - script: |
-    HolaHola
-    HolaholaHola
+    echo HolaHola
+    echo HolaholaHola
   displayName: WavingTwice
