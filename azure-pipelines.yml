@@ -3,11 +3,16 @@ trigger:
 
 pool: Default
 
-steps:
-- script: echo Hola!
-  displayName: Waving
-
-- script: |
-    echo HolaHola
-    echo HolaholaHola
-  displayName: WavingTwice
+stages:
+- stage: Build
+  displayName: 'BuildStage'
+  jobs:
+  - job: BuildJob
+    displayName: 'Build Job'
+    steps:
+    - script: |
+        echo "Hello Build!"
+      displayName: 'Waving Build'
+    - script: |
+        echo "Good bye Build"
+      displayName: 'Bye Build'
