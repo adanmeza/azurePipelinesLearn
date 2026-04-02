@@ -5,44 +5,29 @@ pool:
   name: Default
 
 variables:
-- name: env
-  value: dev
-- name: buildVersion
-  value: v1
+- name: stageName
+  value: Build
 
 stages:
 - stage: Build
-  displayName: "Build Stage"
+  displayName: 'Build Stage'
   jobs:
   - job: BuildJob
-    displayName: "Build Job"
+    displayName: 'Build Job'
     steps:
     - script: |
-        echo "Building version $(buildVersion)"
-      displayName: "Build Step"
-
+        echo "Current stage: $(stageName)"
+      displayName: 'Showing current stage'
     - script: |
-        echo "##vso[task.setvariable variable=buildVersion]v2"
-      displayName: "Update Version"
+        echo "##vso[task.setvariable variable=stageName]Test"
+      displayName: 'Updating stageName variable'
 
-- stage: Deploy
-  displayName: "Deploy Stage"
+- stage: Test
+  displayName: 'Test stage'
   dependsOn: Build
-  condition: succeeded()
-
   jobs:
-  - job: DeployJob
-    displayName: "Deploy Job"
+  - job: testJob
+    displayName: 'Test Job'
     steps:
     - script: |
-        echo "Deploying version ${{ variables.buildVersion }} to $(env)"
-      displayName: "Deploy Step"
-
-  - job: ValidationJob
-    displayName: "Validation Job"
-    dependsOn: DeployJob
-    condition: eq(variables['env'], 'prod')
-    steps:
-      - script: |
-          echo "Running validation in $(env)"
-        displayName: "Validation Step"
+        echo "Showing current stageName value: $(stageName)"
