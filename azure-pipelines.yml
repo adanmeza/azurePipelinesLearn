@@ -22,6 +22,7 @@ stages:
       displayName: 'Bye Build'
 - stage: Test
   displayName: 'Test Stage'
+  dependsOn: Build
   jobs:
   - job: TestJob
     displayName: 'Test Job'
