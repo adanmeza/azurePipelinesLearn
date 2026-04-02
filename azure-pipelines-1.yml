@@ -1,54 +1,31 @@
 trigger:
 - main
 
-variables:
-- name: greet
-  value: Hello
-- name: environment
-  value: dev
-
 pool:
   name: Default
 
-stages:
+variables:
+- name: firstValue
+  value: valueOne
+- name: secondValue
+  value: valueTwo
+
+stages: 
 - stage: Build
-  displayName: "Build Stage"
+  displayName: 'Showing first variable'
   jobs:
-  - job: BuildJob
-    displayName: "Build Job"
+  - job: FirstJob
+    displayName: 'First variable job'
     steps:
     - script: |
-        echo "$(greet) - Starting build"
-        echo "Environment is ${{ variables.environment }}"
-      displayName: "Start Build"
-
-    - script: |
-        echo "Compiling..."
-        exit 1
-      displayName: "Compile step"
-
-    - script: |
-        echo "This should not run"
-      displayName: "Post Build Step"
-
+        echo "This is my first variable $(valueOne)"
+      displayName: 'First script'
 - stage: Deploy
-  displayName: "Deploy Stage"
-  dependsOn: Build
-  condition: succeeded()
+  displayName: 'Showing second value'
   jobs:
-  - job: DeployJob
-    displayName: "Deploy Job"
-    pool:
-      name: Default
+  - job: SecondJob
+    displayName: 'Second variable job'
     steps:
     - script: |
-        echo "$(greet) deploying to $(environment)"
-      displayName: "Deploy Step"
-
-  - job: ValidationJob
-    displayName: "Validation Job"
-    dependsOn: DeployJob
-    steps:
-    - script: |
-        echo "Validating deployment..."
-        echo "Agent: $(Agent.Name)"
+        echo "This is my second variable $(valueTwo)"
+      displayName: "Second script"
