@@ -40,7 +40,7 @@ stages:
       condition: and(
         succeeded(),
         eq(variables['version'],'v2'),
-        eq(variables['env'],'labs'))
+        eq(variables['env'],'lab'))
     - script: |
         echo "Showing variables after changes and validations"
         echo "Environment: $(env)"
