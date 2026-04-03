@@ -5,8 +5,8 @@ pool:
   name: Default
 
 variables:
-- name: passingVariable
-  value: ValueNumberOne
+- name: nala
+  value: labrador
 
 stages:
 - stage: Build
@@ -16,21 +16,18 @@ stages:
     displayName: 'Build Job'
     steps:
     - script: |
-        echo "=== Showing variables ==="
-        echo "Variable: $(passingVariable)"
-        echo "========================="
+        echo "Nala es una $(nala)"
     - script: |
-        echo "##vso[task.setvariable variable=passingVariable;isOutput=true]ValueNumberTwo"
-      name: changingVar
+        echo "##vso[task.setvariable variable=nala]schnautzer"
+      name: varChange
 - stage: Test
-  displayName: 'Test Build'
+  displayName: 'Test Stage'
   variables:
-    chVar: $[stageDependencies.Build.buildJob.outputs['changingVar.passingVariable']]
+    pewito: $[stageDependencies.Build.buildJob.outputs['varChange.nala']]
   jobs:
   - job: testJob
-    displayName: 'Test job'
+    displayName: 'Test Job'
     steps:
     - script: |
-        echo "=== Showing variables after change ==="
-        echo "Variable: $(chVar)"
-        echo "========================="
+        echo "Nala tambien es una $(pewito)"
+      condition: eq(variables['nala'],'schnautzer')
