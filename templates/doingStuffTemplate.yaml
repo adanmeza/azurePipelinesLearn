@@ -1,5 +1,6 @@
 parameters:
-  message: ''
+- name: message
+  default: ''
 
 steps:
-- script: echo ${{ parameter.message }}
+- script: echo ${{ parameters.message }}
