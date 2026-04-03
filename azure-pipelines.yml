@@ -5,14 +5,12 @@ pool:
   name: Default
 
 stages:
-- stage: templateStage
+- stage: misPewitos
   jobs:
-  - job: templateJob
+  - job: misPewitosJob
     steps:
     - template: templates/doingStuffTemplate.yaml
-      parameters:
-        message: 'Hello World!'
-    
     - template: templates/doingStuffTemplate.yaml
       parameters:
-        message: 'Hello again world'
+        pewito: 'muy enojona'
+        gordis: 'muy dormilona'
