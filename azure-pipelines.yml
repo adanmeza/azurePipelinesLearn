@@ -1,37 +1,36 @@
 trigger:
 - main
 
-variables:
-  - name: greet
-    value: Hello
+pool:
+  name: Default
 
-pool: Default
+variables:
+- name: passingVariable
+  value: ValueNumberOne
 
 stages:
 - stage: Build
   displayName: 'Build Stage'
   jobs:
-  - job: BuildJob
+  - job: buildJob
     displayName: 'Build Job'
     steps:
     - script: |
-        echo "${{ variables.greet }} - Build!"
-      displayName: 'Waving Build'
+        echo "=== Showing variables ==="
+        echo "Variable: $(passingVariable)"
+        echo "========================="
     - script: |
-        echo "Good bye Build"
-      displayName: 'Bye Build'
-- stage: Deploy
-  displayName: 'Deploy Stage'
-  dependsOn: Build
+        echo "##vso[task.setvariable variable=passingVariable;isOutput=true]ValueNumberTwo"
+      name: changingVar
+- stage: Test
+  displayName: 'Test Build'
+  variables:
+    chVar: $[stageDependencies.Build.buildJob.outputs['changingVar.passingVariable']]
   jobs:
-  - job: DeployJob
-    displayName: 'Deploy Job'
+  - job: testJob
+    displayName: 'Test job'
     steps:
     - script: |
-        echo "${{ variables.greet }} - This is a deploy job"
-        echo "${{ variables.greet }} - This is a deploy job"
-  - job: SecondJob
-    displayName: 'Second Deploy Job'
-    steps:
-    - script: |
-        echo "Testing a second deploy job"
+        echo "=== Showing variables after change ==="
+        echo "Variable: $(chVar)"
+        echo "========================="
