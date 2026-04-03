@@ -20,7 +20,7 @@ stages:
         echo "Variable: $(passingVariable)"
         echo "========================="
     - script: |
-        echo "##vso[task.setvariable variable=passingVariable,isOutput=true]ValueNumberTwo"
+        echo "##vso[task.setvariable variable=passingVariable;isOutput=true]ValueNumberTwo"
       name: changingVar
 - stage: Test
   displayName: 'Test Build'
