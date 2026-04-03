@@ -18,16 +18,17 @@ stages:
     - script: |
         echo "Nala es una $(nala)"
     - script: |
-        echo "##vso[task.setvariable variable=nala]schnautzer"
+        echo "##vso[task.setvariable variable=nalal;isOutput=true]schnautzer"
       name: varChange
 - stage: Test
   displayName: 'Test Stage'
   variables:
     pewito: $[stageDependencies.Build.buildJob.outputs['varChange.nala']]
+  condition: eq(variables['pewito'],'schnautzer')
   jobs:
   - job: testJob
     displayName: 'Test Job'
     steps:
     - script: |
         echo "Nala tambien es una $(pewito)"
-      condition: eq(variables['pewito'],'schnautzer')
+      
