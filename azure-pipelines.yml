@@ -1,35 +1,27 @@
-trigger:
-- main
-
-pool:
-  name: Default
-
-variables:
-- name: color
-  value: blue
+parameters:
+- name: work1
+  type: boolean
+  default: true
+- name: work2
+  type: boolean
+  default: false
 
 stages:
-- stage: myStage1
-  displayName: 'My Stage'
-  jobs:
-  - job: myJob1
-    displayName: 'My Job'
-    steps:
-    - script: |
-        echo "My favorite color is $(color)"
-    - script: |
-        echo "##vso[task.setvariable variable=color;isOutput=true]orange"
-      name: changeColor
-- stage: myStage2
-  displayName: 'My Stage 2'
-  dependsOn: myStage1
-  variables:
-    color2: $[ stageDependencies.myStage1.myJob1.outputs['changeColor.color'] ]
-  jobs:
-  - job: myJob
-    displayName: 'My job 2'
-    steps:
-    - script: |
-        echo "I used to love ${{ variables.color }}"
-    - script: |
-        echo "But now my favorite color is $(color2)"
+  - stage:
+    pool:
+      name: Default
+
+    jobs:
+      - ${{ each parameter in parameters }}:
+        - ${{ if and(eq(parameter.value,true),contains(parameter.key,'work')) }}:
+          - job: doSomething
+            steps:
+              - bash:
+                  set -ex
+                  echo "Hello World!"
+                name: hello
+                displayName: Greet
+          - template: templates/doingStuffTemplate.yaml
+            parameters:
+              message: 'Hello World'
+              vm: 'myVM'
