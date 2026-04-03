@@ -5,5 +5,5 @@ parameters:
   value: 'labrador'
 
 steps:
-- script: echo "Pewito es un: ${{ parameter.pewito }}"
-- script: echo "La gordis es un: ${{ parameter.gordis }}"
+- script: echo "Pewito es un: ${{ parameters.pewito }}"
+- script: echo "La gordis es un: ${{ parameters.gordis }}"
