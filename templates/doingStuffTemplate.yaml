@@ -1,23 +1,14 @@
 parameters:
-- name: jobName
-  default: ''
-- name: boolVar
-  default: false
-- name: message
-  default: 'Im just a message'
+- name: environment
+  type: object
+  default:
+    - labs
+    - prod
+    - homeLab
 
 jobs:
-- job: regularJOb_${{ parameters.jobName }}
-  steps:
-  - script: |
-      echo "This is just a regular job, and ${{ parameters.message }}"
-- ${{ if eq(parameters.boolVar,true) }}:
-  - job: onlyIfTrueJob_${{ parameters.jobName }}
+- ${{ each par in parameters.environment }}:
+  - job: job_${{ par }}
     steps:
     - script: |
-        echo "This will show only if boolVar is true!"
-- ${{ if eq(parameters.message,'nice') }}:
-  - job: niceJob_${{ parameters.jobName }}
-    steps:
-    - script: |
-        echo "Noice! the new value is: ${{ parameters.message }}"
+        echo "This is the: ${{ par }} environment"
