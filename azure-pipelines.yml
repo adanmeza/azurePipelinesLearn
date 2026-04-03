@@ -5,30 +5,30 @@ pool:
   name: Default
 
 variables:
-- name: nala
-  value: labrador
+- name: color
+  value: blue
 
 stages:
-- stage: Build
-  displayName: 'Build Stage'
+- stage: myStage1
+  displayName: 'My Stage'
   jobs:
-  - job: buildJob
-    displayName: 'Build Job'
+  - job: myJob1
+    displayName: 'My Job'
     steps:
     - script: |
-        echo "Nala es una $(nala)"
+        echo "My favorite color is $(blue)"
     - script: |
-        echo "##vso[task.setvariable variable=nalal;isOutput=true]schnautzer"
-      name: varChange
-- stage: Test
-  displayName: 'Test Stage'
+        echo "##vso[task.setvariable variable=color]orange"
+      name: changeColor
+- stage: myStage2
+  displayName: 'My Stage 2'
   variables:
-    pewito: $[stageDependencies.Build.buildJob.outputs['varChange.nala']]
+    color: $[stageDependencies.myStage1.myJob1.outptus['changeColor.color']]
   jobs:
-  - job: testJob
-    condition: eq(variables['pewito'],'schnautzer')
-    displayName: 'Test Job'
+  - job: myJob
+    displayName: 'My job 2'
     steps:
     - script: |
-        echo "Nala tambien es una $(pewito)"
-      
+        echo "I used to love ${{ variables.color }}"
+    - script: |
+        echo "But now my favorite color is $(color)"
