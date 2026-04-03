@@ -1,11 +1,23 @@
 parameters:
-- name: message
+- name: jobName
   default: ''
-- name: extraMessage
+- name: boolVar
   default: false
+- name: message
+  default: 'Im just a message'
 
-steps:
-- script: |
-    echo "This is the message: ${{ parameters.message }}"
-- ${{ if eq(parameters.extraMessage,true) }}:
-  - script: echo "The extraMessage parameter is true!"
+jobs:
+- job: regularJOb
+  steps:
+  - script: |
+      echo "This is just a regular job, and ${{ parameters.message }}"
+- ${{ if eq(parameters.boolVar,true) }}:
+  - job: onlyIfTrueJob
+    steps:
+    - script: |
+        echo "This will show only if boolVar is true!"
+- ${{ if eq(parameters.message,'nice') }}:
+  - job: niceJob
+    steps:
+    - script: |
+        echo "Noice! the new value is: ${{ parameters.message }}"
