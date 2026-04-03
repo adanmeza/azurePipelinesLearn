@@ -1,12 +1,11 @@
-
 parameters:
-- name: pewito
-  default: 'Schnautzer'
-- name: gordis
-  default: 'Labrador'
+- name: message
+  default: ''
+- name: extraMessage
+  default: false
 
 steps:
 - script: |
-    echo "Pewito es un: ${{ parameters.pewito }}"
-- script: |
-    echo "La gordis es un: ${{ parameters.gordis }}"
+    echo "This is the message: ${{ parameters.message }}"
+- ${{ if eq(parameters.extraMessage,true) }}:
+  - script: echo "The extraMessage parameter is true!"
