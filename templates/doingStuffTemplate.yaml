@@ -1,6 +1,9 @@
 parameters:
-- name: message
-  default: ''
+- name: pewito
+  value: 'Schnautzer'
+- name: gordis
+  value: 'labrador'
 
 steps:
-- script: echo ${{ parameters.message }}
+- script: echo "Pewito es un: ${{ parameter.pewito }}"
+- script: echo "La gordis es un: ${{ parameter.gordis }}"
