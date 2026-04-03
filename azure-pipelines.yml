@@ -24,9 +24,9 @@ stages:
   displayName: 'Test Stage'
   variables:
     pewito: $[stageDependencies.Build.buildJob.outputs['varChange.nala']]
-  condition: eq(variables['pewito'],'schnautzer')
   jobs:
   - job: testJob
+    condition: eq(variables['pewito'],'schnautzer')
     displayName: 'Test Job'
     steps:
     - script: |
