@@ -7,17 +7,17 @@ parameters:
   default: 'Im just a message'
 
 jobs:
-- job: regularJOb
+- job: regularJOb_${{ parameters.jobName }}
   steps:
   - script: |
       echo "This is just a regular job, and ${{ parameters.message }}"
 - ${{ if eq(parameters.boolVar,true) }}:
-  - job: onlyIfTrueJob
+  - job: onlyIfTrueJob_${{ parameters.jobName }}
     steps:
     - script: |
         echo "This will show only if boolVar is true!"
 - ${{ if eq(parameters.message,'nice') }}:
-  - job: niceJob
+  - job: niceJob_${{ parameters.jobName }}
     steps:
     - script: |
         echo "Noice! the new value is: ${{ parameters.message }}"
