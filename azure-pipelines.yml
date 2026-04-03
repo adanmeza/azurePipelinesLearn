@@ -22,8 +22,9 @@ stages:
       name: changeColor
 - stage: myStage2
   displayName: 'My Stage 2'
+  dependsOn: myStage1
   variables:
-    color: $[stageDependencies.myStage1.myJob1.outptus['changeColor.color']]
+    color2: $[ stageDependencies.myStage1.myJob1.outptus['changeColor.color'] ]
   jobs:
   - job: myJob
     displayName: 'My job 2'
@@ -31,4 +32,4 @@ stages:
     - script: |
         echo "I used to love ${{ variables.color }}"
     - script: |
-        echo "But now my favorite color is $(color)"
+        echo "But now my favorite color is $(color2)"
