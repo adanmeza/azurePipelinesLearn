@@ -16,7 +16,7 @@ stages:
     displayName: 'My Job'
     steps:
     - script: |
-        echo "My favorite color is $(blue)"
+        echo "My favorite color is $(color)"
     - script: |
         echo "##vso[task.setvariable variable=color]orange"
       name: changeColor
