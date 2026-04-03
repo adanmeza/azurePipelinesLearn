@@ -12,8 +12,13 @@ stages:
       name: Default
 
     jobs:
+    - job: justOneJob
+      displayName: 'Single Job'
+      steps:
+      - script: echo "This is my job!"
+      
       - ${{ each parameter in parameters }}:
-        - ${{ if and(eq(parameter.value,true),contains(parameter.key,'work')) }}:
+        - ${{ if and(eq(parameter.value,true),contains(parameter.name,'work')) }}:
           - job: doSomething_${{ parameter.name }}
             steps:
               - bash:
@@ -22,4 +27,6 @@ stages:
                 name: hello
                 displayName: Greet
           - template: templates/doingStuffTemplate.yaml
+            message: 'Hello World'
+            vm: 'myVm'
 
