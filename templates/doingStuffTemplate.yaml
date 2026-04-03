@@ -1,9 +1,5 @@
 parameters:
   message: ''
-  vm: ''
 
-jobs:
-- job: doStuff
-  steps:
-    - script: echo ${{ parameters.message }}
-    - script: echo Running on ${{ parameters.vm }}
+steps:
+- script: echo ${{ parameter.message }}
