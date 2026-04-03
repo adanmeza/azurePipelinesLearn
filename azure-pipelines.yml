@@ -24,7 +24,7 @@ stages:
   displayName: 'My Stage 2'
   dependsOn: myStage1
   variables:
-    color2: $[ stageDependencies.myStage1.myJob1.outptus['changeColor.color'] ]
+    color2: $[ stageDependencies.myStage1.myJob1.outputs['changeColor.color'] ]
   jobs:
   - job: myJob
     displayName: 'My job 2'
