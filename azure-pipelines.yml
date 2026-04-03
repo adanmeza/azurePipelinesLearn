@@ -7,14 +7,14 @@ parameters:
   default: false
 
 stages:
-  - stage:
+  - stage: stage1
     pool:
       name: Default
 
     jobs:
       - ${{ each parameter in parameters }}:
         - ${{ if and(eq(parameter.value,true),contains(parameter.key,'work')) }}:
-          - job: doSomething_${{ parameters.name }}
+          - job: doSomething_${{ parameter.name }}
             steps:
               - bash:
                   set -ex
