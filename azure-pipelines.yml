@@ -30,4 +30,4 @@ stages:
     steps:
     - script: |
         echo "Nala tambien es una $(pewito)"
-      condition: eq(variables['nala'],'schnautzer')
+      condition: eq(variables['pewito'],'schnautzer')
