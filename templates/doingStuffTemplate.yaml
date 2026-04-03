@@ -2,7 +2,7 @@ parameters:
 - name: pewito
   default: 'Schnautzer'
 - name: gordis
-  default: 'labrador'
+  default: 'Labrador'
 
 steps:
 - script: echo "Pewito es un: ${{ parameters.pewito }}"
