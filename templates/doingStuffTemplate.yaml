@@ -1,8 +1,6 @@
 parameters:
   message: ''
   vm: ''
-  work1: ''
-  work2: ''
 
 jobs:
 - job: doStuff
