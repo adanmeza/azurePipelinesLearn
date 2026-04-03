@@ -4,7 +4,26 @@ trigger:
 pool:
   name: Default
 
+variables:
+- name: stageName
+  value: 'firstStage'
+
+parameters:
+- name: boolVar
+  default: true
+- name: workZone
+  type: object
+  default:
+    - work1
+    - work2
+    - work3  
+
 stages:
-- stage: paramsStage
+- stage: ${{ variables.stageName }}
   jobs:
-  - template: templates/doingStuffTemplate.yaml
+  - ${{ each zone in parameters.workZone }}:
+    - ${{ if eq(parameters.boolVar, true) }}:
+      - job: job_${{ zone }}
+        steps:
+        - script: |
+            echo "This is ${{ zone }}"
