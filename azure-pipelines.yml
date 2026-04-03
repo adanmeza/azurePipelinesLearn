@@ -1,32 +1,18 @@
-parameters:
-- name: work1
-  type: boolean
-  default: true
-- name: work2
-  type: boolean
-  default: false
+trigger:
+- main
+
+pool:
+  name: Default
 
 stages:
-  - stage: stage1
-    pool:
-      name: Default
-
-    jobs:
-    - job: justOneJob
-      displayName: 'Single Job'
-      steps:
-      - script: echo "This is my job!"
-      
-      - ${{ each parameter in parameters }}:
-        - ${{ if and(eq(parameter.value,true),contains(parameter.name,'work')) }}:
-          - job: doSomething_${{ parameter.name }}
-            steps:
-              - bash:
-                  set -ex
-                  echo "Hello World!"
-                name: hello
-                displayName: Greet
-          - template: templates/doingStuffTemplate.yaml
-            message: 'Hello World'
-            vm: 'myVm'
-
+- stage: templateStage
+  jobs:
+  - job: templateJob
+    steps:
+    - template: templates/doingStuffTemplate.yaml
+      parameters:
+        message: 'Hello World!'
+    
+    - template: templates/doingStuffTemplate.yaml
+      parameters:
+        message: 'Hello again world'
