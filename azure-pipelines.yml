@@ -8,18 +8,3 @@ stages:
 - stage: paramsStage
   jobs:
   - template: templates/doingStuffTemplate.yaml
-    parameters:
-      jobName: 'jobNumber1'
-  - template: templates/doingStuffTemplate.yaml
-    parameters:
-      jobName: 'jobNumber2'
-      boolVar: true
-  - template: templates/doingStuffTemplate.yaml
-    parameters:
-      jobName: 'jobNumber3'
-      message: 'nice'
-  - template: templates/doingStuffTemplate.yaml
-    parameters:
-      jobName: 'jobNumber4'
-      message: 'Bonus!'
-      boolVar: true
