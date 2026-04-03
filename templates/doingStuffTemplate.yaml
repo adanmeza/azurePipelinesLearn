@@ -8,7 +8,7 @@ parameters:
 
 jobs:
 - ${{ each par in parameters.environment }}:
-  - job: job_${{ par }}
+  - job: jobs_${{ par }}
     steps:
     - script: |
         echo "This is the: ${{ par }} environment"
