@@ -2,39 +2,20 @@ trigger:
 - main
 
 pool:
- name: Default
-
-variables:
-- name: showMeAColor
-  value: green
+  name: Default
 
 stages:
-- stage: VarsStage
-  variables:
-  - name: localVar
-    value: ThisIsLocal
-  jobs: 
-  - job: varJob
-    steps:
-    - script: |
-        echo "I'm showing you a global variable, and the color is: $(showMeAColor)"
-    - script: |
-        echo "This is just a stage var: $(localVar)"
-    - script: |
-        echo "##vso[task.setVariable variable=showMeAColor;isOutput=true]blue"
-      name: changeColor
-
-- stage: showNewVarStage
-  variables:
-    newColor: $[stageDependencies.VarsStage.varJob.outputs['changeColor.showMeAColor']]
-  jobs:
-  - job: showNewVarJob
-    steps:
-    - script: |
-        echo "This is the new variable, and the color is: $(newColor)"
-
-- stage: usingTemplatesStage
+- stage: justARegularStage
   jobs:
   - template: templates/doingStuffTemplate.yaml
     parameters:
-      messageZone: "This is a message from the pipeline!"
+      jobName: firstTempalteJob
+      jobMessage: 'first time using a template to show this!'
+  - template: templates/doingStuffTemplate.yaml
+    parameters:
+      jobName: secondTemplateJob
+      jobMessage: 'Second time using a template to show this!'
+  - template: templates/doingStuffTemplate.yaml
+    parameters:
+      jobName: thirdTemplateJob
+      jobMessage: 'Third time using a template to show this!'
