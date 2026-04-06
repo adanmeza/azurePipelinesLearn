@@ -4,6 +4,14 @@ trigger:
 pool:
   name: Default
 
+parameters:
+- name: zones
+  type: object
+  default:
+    - zone1
+    - zone2
+    - zone3
+
 stages:
 - stage: Build
   jobs:
@@ -18,8 +26,13 @@ stages:
           environment: test
         prod:
           service: prod
-          enironment: prod
+          environment: prod
     steps:
     - script: |
         echo "This job has the following service: $(service)"
         echo "The environment is: $(environment)"
+  - ${{ each zone in parameters.zones }}:
+    - job: MyJob_${{ zone }}
+      steps:
+      - script: |
+          echo "This job is using this zone: ${{ zone }}"
