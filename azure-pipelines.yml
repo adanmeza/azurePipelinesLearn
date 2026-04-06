@@ -5,17 +5,21 @@ pool:
   name: Default
 
 stages:
-- stage: justARegularStage
+- stage: Build
   jobs:
-  - template: templates/doingStuffTemplate.yaml
-    parameters:
-      jobName: firstTempalteJob
-      jobMessage: 'first time using a template to show this!'
-  - template: templates/doingStuffTemplate.yaml
-    parameters:
-      jobName: secondTemplateJob
-      jobMessage: 'Second time using a template to show this!'
-  - template: templates/doingStuffTemplate.yaml
-    parameters:
-      jobName: thirdTemplateJob
-      jobMessage: 'Third time using a template to show this!'
+  - job: MyJob
+    strategy:
+      matrix:
+        dev:
+          service: dev
+          environment: test
+        qa:
+          service: qa
+          environment: test
+        prod:
+          service: prod
+          enironment: prod
+    steps:
+    - script: |
+        echo "This job has the following service: $(service)"
+        echo "The environment is: $(environment)"
