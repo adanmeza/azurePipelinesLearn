@@ -2,28 +2,39 @@ trigger:
 - main
 
 pool:
-  name: Default
+ name: Default
 
 variables:
-- name: stageName
-  value: 'firstStage'
-
-parameters:
-- name: boolVar
-  default: true
-- name: workZone
-  type: object
-  default:
-    - work1
-    - work2
-    - work3  
+- name: showMeAColor
+  value: green
 
 stages:
-- stage: ${{ variables.stageName }}
+- stage: VarsStage
+  variables:
+  - name: localVar
+    value: ThisIsLocal
+  jobs: 
+  - job: varJob
+    steps:
+    - script: |
+        echo "I'm showing you a global variable, and the color is: $(showMeAColor)"
+    - script: |
+        echo "This is just a stage var: $(localVar)"
+    - script: |
+        echo "##vso[task.setVariable variable=showMeAColor;isOutput=true]blue"
+      name: changeColor
+
+- stage: showNewVarStage
+  variables:
+    newColor: $[stageDependencies.VarsStage.varJob.outputs['changeColor.showMeAColor']]
   jobs:
-  - ${{ each zone in parameters.workZone }}:
-    - ${{ if eq(parameters.boolVar, true) }}:
-      - job: job_${{ zone }}
-        steps:
-        - script: |
-            echo "This is ${{ zone }}"
+  - job: showNewVarJob
+    steps:
+    - script: |
+        echo "This is the new variable, and the color is: $(newColor)"
+
+- stage: usingTemplatesStage
+  jobs:
+  - template: templates/doingStuffTemplate.yaml
+    parameters:
+      messageZone: "This is a message from the pipeline!"
