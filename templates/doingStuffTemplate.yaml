@@ -1,14 +1,17 @@
 parameters:
-- name: environment
+- name: zones
   type: object
   default:
-    - labs
+    - lab
+    - env
     - prod
-    - homeLab
+- name: messageZone
+  default: ''
 
 jobs:
-- ${{ each par in parameters.environment }}:
-  - job: jobs_${{ par }}
+- ${{ each zone in parameters.zones }}:
+  - job: zoneName_${{ zone }}
     steps:
     - script: |
-        echo "This is the: ${{ par }} environment"
+        echo "This is the zone: ${{ zone }}"
+        echo "and the message is ${{ message }}"
