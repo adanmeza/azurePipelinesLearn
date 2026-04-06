@@ -5,6 +5,6 @@ parameters:
   default: ''
 
 jobs:
-- job: ${{ jobName }}
+- job: ${{ parameters.jobName }}
   steps:
-  - script: "This is the message: ${{ jobMessage }}"
+  - script: "This is the message: ${{ parameters.jobMessage }}"
