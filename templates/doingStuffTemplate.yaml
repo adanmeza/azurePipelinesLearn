@@ -14,4 +14,4 @@ jobs:
     steps:
     - script: |
         echo "This is the zone: ${{ zone }}"
-        echo "and the message is ${{ messageZone }}"
+        echo "and the message is ${{ parameters.messageZone }}"
