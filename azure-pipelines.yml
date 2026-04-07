@@ -2,37 +2,20 @@ trigger:
 - main
 
 pool:
-  name: Default
+ name: Default
 
 parameters:
-- name: zones
+- name: environment
   type: object
   default:
-    - zone1
-    - zone2
-    - zone3
+    - qa
+    - prod
+    - dev
 
 stages:
-- stage: Build
+- stage: Deploy
   jobs:
-  - job: MyJob
-    strategy:
-      matrix:
-        dev:
-          service: dev
-          environment: test
-        qa:
-          service: qa
-          environment: test
-        prod:
-          service: prod
-          environment: prod
-    steps:
-    - script: |
-        echo "This job has the following service: $(service)"
-        echo "The environment is: $(environment)"
-  - ${{ each zone in parameters.zones }}:
-    - job: MyJob_${{ zone }}
-      steps:
-      - script: |
-          echo "This job is using this zone: ${{ zone }}"
+  - ${{ each env in parameters.environment }}:
+    - template: templates/doingStuffTemplate.yaml
+      parameters:
+       environment: ${{ env }}
