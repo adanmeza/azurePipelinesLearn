@@ -1,10 +1,9 @@
 parameters:
-- name: jobName
-  default: ''
-- name: jobMessage
-  default: ''
+- name: environment
+  type: string
 
 jobs:
-- job: ${{ parameters.jobName }}
+- job: work_${{ parameters.environment }}
   steps:
-  - script: "This is the message: ${{ parameters.jobMessage }}"
+  - script: |
+      echo "Deploying on ${{ parameters.environment }}"
