@@ -1,21 +1,27 @@
+
+parameters:
+- name: environments
+  type: object
+  default:
+    - dev
+    - qa
+    - prod
+
 trigger:
 - main
 
 pool:
- name: Default
-
-parameters:
-- name: environment
-  type: object
-  default:
-    - qa
-    - prod
-    - dev
+  name: Default
 
 stages:
-- stage: DeployStage
+- stage: Deploy
   jobs:
-  - ${{ each env in parameters.environment }}:
-    - template: templates/doingStuffTemplate.yaml
-      parameters:
-       environment: ${{ env }}
+  - ${{ each env in parameters.environments }}:
+    - deployment: deploy_${{ env }}
+      environment: ${{ env }}
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - script: |
+                echo "Deploying to ${{ env }}"
