@@ -1,9 +1,16 @@
 parameters:
-- name: environment
-  type: string
+  - name: env
+    type: string
+
+variables:
+- group: testVars
 
 jobs:
-- job: work_${{ parameters.environment }}
-  steps:
-  - script: |
-      echo "Deploying on ${{ parameters.environment }}"
+- deployment: 
+  environment: ${{ parameters.env }}
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - script: |
+            echo "The password is $(password)" 
