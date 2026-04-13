@@ -1,9 +1,8 @@
 parameters:
   - name: env
     type: string
-
-variables:
-- group: testVars
+  - name: pwd
+    type: string
 
 jobs:
 - deployment: 
@@ -13,4 +12,4 @@ jobs:
       deploy:
         steps:
         - script: |
-            echo "The password is $(password)" 
+            echo "The password is ${{ parameters.pwd }}" 
