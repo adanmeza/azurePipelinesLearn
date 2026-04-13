@@ -1,25 +1,58 @@
-parameters:
-  - name: environment
-    type: object
-    default:
-      - dev
-      - qa
-      - prod
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
 
 variables:
 - group: testVars
 
 stages:
-- stage: BuildStage
+- stage: Build
   jobs:
   - job: BuildJob
     steps:
-    - script: echo "Starging build..."
+    - script: |
+        echo "Building app $(appName)..."
 
-- stage: usingSecVars
+- stage: DeployApp
+  dependsOn: Build
+  condition: succeeded()
   jobs:
-  - ${{ each zone in parameters.environment }}:
-    - template: templates/doingStuffTemplate.yaml
-      parameters:
-        env: ${{ zone }}
-        pwd: ${{ variables.password }}
+  - deployment: DeployPhase
+    environment: dev
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - script: |
+              echo "Deploying app $(appName) in dev"
+- stage: QADeploy
+  dependsOn: DeployApp
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'],'refs/heads/main'), ne(variables['Build.Reason'],'PullRequest'))
+  jobs:
+  - deployment: QAPhase
+    environment: qa
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - script: |
+              echo "Dev passed, now checking QA for $(appName)"
+
+- stage: ProdDeploy
+  dependsOn: QADeploy
+  condition: succeeded()
+  jobs:
+  - deployment: ProdDeployment
+    environment: prod
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - script: |
+              echo "You erached prod in $(appName), the password is $(password)"
