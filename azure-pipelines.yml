@@ -1,27 +1,25 @@
-
 parameters:
-- name: environments
-  type: object
-  default:
-    - dev
-    - qa
-    - prod
+  - name: environment
+    type: object
+    default:
+      - dev
+      - qa
+      - prod
 
-trigger:
-- main
-
-pool:
-  name: Default
+variables:
+- group: testVars
 
 stages:
-- stage: Deploy
+- stage: BuildStage
   jobs:
-  - ${{ each env in parameters.environments }}:
-    - deployment: deploy_${{ env }}
-      environment: ${{ env }}
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-            - script: |
-                echo "Deploying to ${{ env }}"
+  - job: BuildJob
+    steps:
+    - script: echo "Starging build..."
+
+- stage: usingSecVars
+  jobs:
+  - ${{ each zone in parameters.environment }}:
+    - template: templates/doingStuffTemplate.yaml
+      parameters:
+        env: ${{ zone }}
+        pwd: ${{ variables.password }}
