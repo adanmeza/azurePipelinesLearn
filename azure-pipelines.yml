@@ -3,56 +3,47 @@ trigger:
     include:
       - main
 
-pr:
-  branches:
-    include:
-      - main
-
 variables:
-- group: testVars
+- name: appName
+  value: myApp
 
 stages:
-- stage: Build
-  jobs:
-  - job: BuildJob
-    steps:
-    - script: |
-        echo "Building app $(appName)..."
+  - stage: Build
+    displayName: 'Build Stage'
+    jobs:
+    - job: BuildJob
+      displayName: 'Building app'
+      steps:
+      - script: echo "Building app $(appName)"
+      - script: |
+          echo "##vso[task.setvariable variable=version;isOutput=true]v1"
+        name: setVersion
 
-- stage: DeployApp
-  dependsOn: Build
-  condition: succeeded()
-  jobs:
-  - deployment: DeployPhase
-    environment: dev
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - script: |
-              echo "Deploying app $(appName) in dev"
-- stage: QADeploy
-  dependsOn: DeployApp
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'],'refs/heads/main'), ne(variables['Build.Reason'],'PullRequest'))
-  jobs:
-  - deployment: QAPhase
-    environment: qa
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - script: |
-              echo "Dev passed, now checking QA for $(appName)"
+  - stage: verCheck
+    displayName: 'Version check'
+    variables:
+      version: $[stageDependencies.Build.BuildJob.outputs['setVersion.version']]
+    dependsOn: Build
+    condition: and(succeeded(),eq(variables.version,'v1'))
+    jobs:
+    - job: versionCheckJob
+      displayName: 'Showing current version'
+      steps:
+      - script: |
+          echo "The current version is $(version)"
+      - script: |
+          echo "##vso[task.setvariable variable=newVersion;isOutput=true]v2"
+        name: versionUpdate
 
-- stage: ProdDeploy
-  dependsOn: QADeploy
-  condition: succeeded()
-  jobs:
-  - deployment: ProdDeployment
-    environment: prod
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - script: |
-              echo "You erached prod in $(appName), the password is $(password)"
+  - stage: verUpdate
+    displayName: 'New version'
+    variables:
+      newVersion: $[stageDependencies.verCheck.versionCheckJob.outputs['versionUpdate.newVersion']]
+    dependsOn: verCheck
+    condition: and(succeeded(),eq(variables['Build.SourceBranch'],'refs/heads/main'))
+    jobs:
+    - job: showingValues
+      displayName: 'Showing app name and version'
+      steps:
+      - script: |
+          echo "App name is: $(appName), and version is: $(newVersion)"
