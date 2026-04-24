@@ -3,50 +3,50 @@ trigger:
     include:
       - main
 
-pool:
-  name: Default
+parameters:
+- name: zone
+  type: object
+  default:
+    - dev
+    - qa
+    - prod
 
 variables:
 - name: appName
-  value: myApp
+  value: MyApp
 
 stages:
-  - stage: Build
-    displayName: 'Build Stage'
-    jobs:
-    - job: BuildJob
-      displayName: 'Building app'
-      steps:
-      - script: echo "Building app $(appName)"
-      - script: |
-          echo "##vso[task.setvariable variable=version;isOutput=true]v1"
-        name: setVersion
+- stage: BuildStage
+  jobs:
+  - job: BuildJob
+    steps:
+    - script: echo "Building app"
+    - script: |
+        echo "##vso[task.setvariable variable=appVersion;isOutput=true]v1.2"
+      name: setVersion
 
-  - stage: verCheck
-    displayName: 'Version check'
-    variables:
-      version: $[stageDependencies.Build.BuildJob.outputs['setVersion.version']]
-    dependsOn: Build
-    condition: and(succeeded(),eq(variables.version,'v1'))
-    jobs:
-    - job: versionCheckJob
-      displayName: 'Showing current version'
-      steps:
-      - script: |
-          echo "The current version is $(version)"
-      - script: |
-          echo "##vso[task.setvariable variable=newVersion;isOutput=true]v2"
-        name: versionUpdate
+- stage: checkVersionStage
+  dependsOn: BuildStage
+  condition: and(succeeded(), eq(stageDependencies.BuildStage.BuildJob.outputs['setVersion.appVersion'], 'v1.2'))
+  jobs:
+  - job: checkVersionJob
+    steps:
+    - script: "The version is correct, you can proceed"
 
-  - stage: verUpdate
-    displayName: 'New version'
-    variables:
-      newVersion: $[stageDependencies.verCheck.versionCheckJob.outputs['versionUpdate.newVersion']]
-    dependsOn: verCheck
-    condition: and(succeeded(),eq(variables['Build.SourceBranch'],'refs/heads/main'))
-    jobs:
-    - job: showingValues
-      displayName: 'Showing app name and version'
-      steps:
-      - script: |
-          echo "App name is: $(appName), and version is: $(newVersion)"
+- stage: creatingDeployments
+  dependsOn: checkVersionStage
+  condition: succeeded()
+  jobs:
+  - ${{ each env in parameters.zone }}:
+    - deployment: deploy_env_${{ env }}
+      environment: ${{ env }}
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: Bash@3
+              displayName: 'Swhoing env and app name'
+              inputs:
+                targetType: inline
+                script: |
+                  echo "This is the env ${{ env }} and the app name is $(appName)"
