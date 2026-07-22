@@ -13,25 +13,28 @@ stages:
     steps:
     - script: echo "Compiling..."
     - script: mkdir build
-    - script: touch build/artifact.zip
+    - script: touch build/app.dll
     - script: touch build/README.txt
-    - script: touch build/backup.txt
+    - script: touch build/notes.txt
     - script: touch build/script.sh
-    - script: mkdir artifacts
+    - script: mkdir packages
     - task: CopyFiles@2
       inputs:
         SourceFolder: build
-        Contents: '*.zip ! backup.txt'
-        TargetFolder: artifacts
+        Contents: |
+          **
+          !notes.txt
+        TargetFolder: packages
     - task: ArchiveFiles@2
       inputs:
-        rootFolderOrFile: 'artifacts'
+        rootFolderOrFile: '$(Build.BinariesDirectory)/packages'
+        includeRootFolder: false
         archiveType: 'zip'
-        archiveFile: 'artifactsAPP.zip'
+        archiveFile: '$(Build.BinariesDirectory)/artifactsAPP.zip'
         replaceExistingArchive: true
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: artifactsAPP.zip
+        targetPath: '$(Pipeline.Workspace)/artifactsAPP.zip'
         artifact: buildArtifact
         publishLocation: pipeline
 
@@ -43,5 +46,5 @@ stages:
         inputs:
           buildType: current
           targetPath: deployArtifacts
-          artifactName: buildArtifact
+          artifact: buildArtifact
       - script: ls -ltr deployArtifacts
