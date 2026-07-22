@@ -24,7 +24,7 @@ stages:
         Contents: |
           **
           !notes.txt
-        TargetFolder: packages
+        TargetFolder: '$(Build.BinariesDirectory)/packages'
     - task: ArchiveFiles@2
       inputs:
         rootFolderOrFile: '$(Build.BinariesDirectory)/packages'
@@ -34,7 +34,7 @@ stages:
         replaceExistingArchive: true
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(Pipeline.Workspace)/artifactsAPP.zip'
+        targetPath: '$(Build.BinariesDirectory)/artifactsAPP.zip'
         artifact: buildArtifact
         publishLocation: pipeline
 
