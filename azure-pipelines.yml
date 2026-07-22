@@ -11,14 +11,37 @@ stages:
   jobs:
   - job: BuildJob
     steps:
+    - script: echo "Compiling..."
     - script: mkdir build
-    - script: touch build/InventoryAPI.zip
-    - script: touch build/BillingAPI.zip
+    - script: touch build/artifact.zip
     - script: touch build/README.txt
-    - script: mkdir package
+    - script: touch build/backup.txt
+    - script: touch build/script.sh
+    - script: mkdir artifacts
     - task: CopyFiles@2
       inputs:
         SourceFolder: build
-        Contents: '*.zip'
-        TargetFolder: package
-    - script: ls -ltr package
+        Contents: '*.zip ! backup.txt'
+        TargetFolder: artifacts
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: 'artifacts'
+        archiveType: 'zip'
+        archiveFile: 'artifactsAPP.zip'
+        replaceExistingArchive: true
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: artifactsAPP.zip
+        artifact: buildArtifact
+        publishLocation: pipeline
+
+- stage: Deploy
+  jobs:
+    - job: DeployJob
+      steps:
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          buildType: current
+          targetPath: deployArtifacts
+          artifactName: buildArtifact
+      - script: ls -ltr deployArtifacts
