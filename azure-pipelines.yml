@@ -3,50 +3,32 @@ trigger:
     include:
       - main
 
-parameters:
-- name: zone
-  type: object
-  default:
-    - dev
-    - qa
-    - prod
-
-variables:
-- name: appName
-  value: MyApp
+pool:
+  name: Default
 
 stages:
-- stage: BuildStage
-  jobs:
-  - job: BuildJob
-    steps:
-    - script: echo "Building app"
-    - script: |
-        echo "##vso[task.setvariable variable=appVersion;isOutput=true]v1.2"
-      name: setVersion
+  - stage: Build
+    jobs:
+      - job: BuildJob
+        steps:
+        - script: echo "Compiling..."
+        - script: mkdir package
+        - script: touch package/InventoryAPI.zip
+        - task: PublishPipelineArtifact@1
+          inputs:
+            targetPath: package
+            artifact: 'application'
+            publishLocation: 'pipeline'
 
-- stage: checkVersionStage
-  dependsOn: BuildStage
-  condition: and(succeeded(), eq(stageDependencies.BuildStage.BuildJob.outputs['setVersion.appVersion'], 'v1.2'))
-  jobs:
-  - job: checkVersionJob
-    steps:
-    - script: "The version is correct, you can proceed"
-
-- stage: creatingDeployments
-  dependsOn: checkVersionStage
-  condition: succeeded()
-  jobs:
-  - ${{ each env in parameters.zone }}:
-    - deployment: deploy_env_${{ env }}
-      environment: ${{ env }}
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-            - task: Bash@3
-              displayName: 'Swhoing env and app name'
-              inputs:
-                targetType: inline
-                script: |
-                  echo "This is the env ${{ env }} and the app name is $(appName)"
+  - stage: Deploy
+    dependsOn: Build
+    jobs:
+      - job: DeployJob
+        steps:
+        - script: mkdir downloadedArtifacts
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            buildType: current
+            targetPath: downloadedArtifacts
+        - script: ls -ltr downloadedArtifacts
+        - script: echo "Deploying InventoryAPI.zip"
