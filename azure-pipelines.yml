@@ -1,34 +1,23 @@
 trigger:
   branches:
     include:
-      - main
+    - main
 
 pool:
   name: Default
 
 stages:
-  - stage: Build
-    jobs:
-      - job: BuildJob
-        steps:
-        - script: echo "Compiling..."
-        - script: mkdir package
-        - script: touch package/InventoryAPI.zip
-        - task: PublishPipelineArtifact@1
-          inputs:
-            targetPath: package
-            artifact: 'application'
-            publishLocation: 'pipeline'
-
-  - stage: Deploy
-    dependsOn: Build
-    jobs:
-      - job: DeployJob
-        steps:
-        - task: DownloadPipelineArtifact@2
-          inputs:
-            buildType: current
-            targetPath: downloadedArtifacts
-            artifactName: 'application'
-        - script: ls -ltr downloadedArtifacts
-        - script: echo "Deploying InventoryAPI.zip"
+- stage: Build
+  jobs:
+  - job: BuildJob
+    steps:
+    - script: mkdir build
+    - script: touch build/InventoryAPI.zip
+    - script: touch build/BillingAPI.zip
+    - script: touch build/README.txt
+    - script: mkdir package
+    - task: CopyFiles@2
+      inputs:
+        Contents: build/*.zip
+        TargetFolder: package
+    - script: ls -ltr package
