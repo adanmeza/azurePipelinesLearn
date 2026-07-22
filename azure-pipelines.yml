@@ -18,6 +18,7 @@ stages:
     - script: mkdir package
     - task: CopyFiles@2
       inputs:
-        Contents: build/*.zip
+        SourceFolder: build
+        Contents: '*.zip'
         TargetFolder: package
     - script: ls -ltr package
