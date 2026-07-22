@@ -18,7 +18,7 @@ stages:
           inputs:
             targetPath: package
             artifact: 'application'
-            publishLocation: 'pipeline'
+            publishLocation: 'filepath'
 
   - stage: Deploy
     dependsOn: Build
