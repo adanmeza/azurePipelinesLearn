@@ -18,17 +18,17 @@ stages:
           inputs:
             targetPath: package
             artifact: 'application'
-            publishLocation: 'filepath'
+            publishLocation: 'pipeline'
 
   - stage: Deploy
     dependsOn: Build
     jobs:
       - job: DeployJob
         steps:
-        - script: mkdir downloadedArtifacts
         - task: DownloadPipelineArtifact@2
           inputs:
             buildType: current
             targetPath: downloadedArtifacts
+            artifactName: 'application'
         - script: ls -ltr downloadedArtifacts
         - script: echo "Deploying InventoryAPI.zip"
