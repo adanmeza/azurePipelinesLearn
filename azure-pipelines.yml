@@ -1,50 +1,23 @@
 trigger:
   branches:
     include:
-    - main
+      - main
 
 pool:
   name: Default
 
 stages:
-- stage: Build
-  jobs:
-  - job: BuildJob
-    steps:
-    - script: echo "Compiling..."
-    - script: mkdir build
-    - script: touch build/app.dll
-    - script: touch build/README.txt
-    - script: touch build/notes.txt
-    - script: touch build/script.sh
-    - script: mkdir packages
-    - task: CopyFiles@2
-      inputs:
-        SourceFolder: build
-        Contents: |
-          **
-          !notes.txt
-        TargetFolder: '$(Build.BinariesDirectory)/packages'
-    - task: ArchiveFiles@2
-      inputs:
-        rootFolderOrFile: '$(Build.BinariesDirectory)/packages'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.BinariesDirectory)/artifactsAPP.zip'
-        replaceExistingArchive: true
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: '$(Build.BinariesDirectory)/artifactsAPP.zip'
-        artifact: buildArtifact
-        publishLocation: pipeline
-
-- stage: Deploy
-  jobs:
-    - job: DeployJob
-      steps:
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          buildType: current
-          targetPath: deployArtifacts
-          artifact: buildArtifact
-      - script: ls -ltr deployArtifacts
+  - stage: learningDirectories
+    jobs:
+      - job: directoriesJob
+        steps:
+        - script: echo "$(Build.SourcesDirectory)"
+        - script: echo "$(Build.BinariesDirectory)"
+        - script: echo "$(Build.ArtifactStagingDirectory)"
+        - script: echo "$(Pipeline.Workspace)"
+        - script: echo "$(Agent.TempDirectory)"
+        - script: ls -la $(Build.SourcesDirectory)
+        - script: ls -la $(Build.BinariesDirectory)
+        - script: ls -la $(Build.ArtifactStagingDirectory)
+        - script: touch $(Build.ArtifactStagingDirectory)/hello.txt
+        - script: ls -la $(Build.ArtifactStagingDirectory)
