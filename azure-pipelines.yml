@@ -1,0 +1,75 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  name: Default
+
+stages:
+  - stage: ShowingManifests
+    jobs:
+      - job: listCopyAndTransfer
+        steps:
+        - task: Bash@3
+          inputs:
+            targetType: 'inline'
+            script: 'ls -ltr $(Build.SourcesDirectory)/k8s'
+        - task: CopyFiles@2
+          inputs:
+            SourceFolder: $(Build.SourcesDirectory)/k8s
+            Contents: '**'
+            TargetFolder: $(Build.ArtifactStagingDirectory)
+        - task: PublishPipelineArtifact@1
+          inputs:
+            targetPath: $(Build.ArtifactStagingDirectory)
+            artifact: manifests
+            publishLocation: 'pipeline'
+  - stage: DownloadingArtifacts
+    jobs:
+      - job: downloadJob
+        steps:
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            buildType: current
+            artifactName: manifests
+            targetPath: '$(Pipeline.Workspace)'
+        - task: Bash@3 
+          inputs:
+            targetType: inline
+            script: find $(Pipeline.Workspace)
+        - task: Kubernetes@1
+          inputs:
+            connectionType: 'Kubernetes Service Connection'
+            kubernetesServiceEndpoint: 'k8s-lab'
+            command: login
+        - task: Kubernetes@1
+          inputs:
+            connectionType: 'Kubernetes Service Connection'
+            kubernetesServiceEndpoint: 'k8s-lab'
+            command: get
+            arguments: nodes
+        - task: Kubernetes@1
+          inputs:
+            connectionType: 'Kubernetes Service Connection'
+            kubernetesServiceEndpoint: 'k8s-lab'
+            command: apply
+            arguments: -f $(Pipeline.Workspace)/*.yaml
+        - task: Kubernetes@1
+          inputs:
+            connectionType: 'Kubernetes Service Connection'
+            kubernetesServiceEndpoint: 'k8s-lab'
+            command: get
+            arguments: deployments
+        - task: Kubernetes@1
+          inputs:
+            connectionType: 'Kubernetes Service Connection'
+            kubernetesServiceEndpoint: 'k8s-lab'
+            command: get
+            arguments: pods
+        - task: Kubernetes@1
+          inputs:
+            connectionType: 'Kubernetes Service Connection'
+            kubernetesServiceEndpoint: 'k8s-lab'
+            command: get
+            arguments: svc
