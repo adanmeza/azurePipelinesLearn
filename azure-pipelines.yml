@@ -29,7 +29,7 @@ stages:
             rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
             includeRootFolder: false
             archiveType: 'zip'
-            archiveFile: 'InventoryAPI_$(Build.BuildId).zip'
+            archiveFile: '$(Build.ArtifactStagingDirectory)/InventoryAPI_$(Build.BuildId).zip'
             replaceExistingArchive: true
         - script: |
             echo "Sources:"
@@ -43,7 +43,7 @@ stages:
             ls -R $(Build.ArtifactStagingDirectory)
         - task: PublishPipelineArtifact@1
           inputs:
-            targetPath: '$(Build.ArtifactStagingDirectory)'
+            targetPath: '$(Build.ArtifactStagingDirectory)/InventoryAPI_$(Build.BuildId).zi'
             artifact: 'artifact'
             publishLocation: 'pipeline'
   - stage: DeployDev
@@ -53,7 +53,7 @@ stages:
         - task: DownloadPipelineArtifact@2
           inputs:
             buildType: 'current'
-            artifactName: 'InventoryAPI_$(Build.BuildId).zip'
+            artifactName: 'artifact'
             targetPath: '$(Pipeline.Workspace)'
         - script: ls -ltr '$(Pipeline.Workspace)'
         - script: echo "Deploying InventoryAPI to Development..."
