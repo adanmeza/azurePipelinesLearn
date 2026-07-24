@@ -7,17 +7,45 @@ pool:
   name: Default
 
 stages:
-  - stage: learningDirectories
+  - stage: Build
     jobs:
-      - job: directoriesJob
+      - job: BuildJob
         steps:
-        - script: echo "$(Build.SourcesDirectory)"
-        - script: echo "$(Build.BinariesDirectory)"
-        - script: echo "$(Build.ArtifactStagingDirectory)"
-        - script: echo "$(Pipeline.Workspace)"
-        - script: echo "$(Agent.TempDirectory)"
-        - script: ls -la $(Build.SourcesDirectory)
-        - script: ls -la $(Build.BinariesDirectory)
-        - script: ls -la $(Build.ArtifactStagingDirectory)
-        - script: touch $(Build.ArtifactStagingDirectory)/hello.txt
-        - script: ls -la $(Build.ArtifactStagingDirectory)
+        - script: echo "Compiling"
+        - script: mkdir bin
+        - script: touch bin/InventoryAPI.dll
+        - script: touch bin/InventoryAPI.pdb
+        - script: touch bin/appsettings.json
+        - script: touch bin/README.md
+        - task: CopyFiles@2
+          inputs:
+            SourceFolder: $(Build.SourcesDirectory)/bin
+            Contents: |
+              InventoryAPI.dll
+              appsettings.json
+            TargetFolder: '$(Build.ArtifactStagingDirectory)'
+        - task: ArchiveFiles@2
+          inputs:
+            rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
+            includeRootFolder: false
+            archiveType: 'zip'
+            archiveFile: 'InventoryAPI_$(Build.BuildId).zip'
+            replaceExistingArchive: true
+        - task: PublishPipelineArtifact@1
+          inputs:
+            targetPath: '$(Build.ArtifactStagingDirectory)'
+            artifact: 'InventoryAPI_$(Build.BuildId).zip'
+            publishLocation: 'pipeline'
+  - stage: DeployDev
+    jobs:
+      - job: DeployJob
+        steps:
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            buildType: 'current'
+            artifactName: 'InventoryAPI_$(Build.BuildId).zip'
+            targetPath: '$(Pipeline.Workspace)'
+        - script: ls -ltr '$(Pipeline.Workspace)'
+        - script: echo "Deploying InventoryAPI to Development..."
+
+            
