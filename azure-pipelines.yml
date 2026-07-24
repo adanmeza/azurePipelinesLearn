@@ -43,7 +43,7 @@ stages:
             ls -R $(Build.ArtifactStagingDirectory)
         - task: PublishPipelineArtifact@1
           inputs:
-            targetPath: '$(Build.ArtifactStagingDirectory)/InventoryAPI_$(Build.BuildId).zi'
+            targetPath: '$(Build.ArtifactStagingDirectory)/InventoryAPI_$(Build.BuildId).zip'
             artifact: 'artifact'
             publishLocation: 'pipeline'
   - stage: DeployDev
