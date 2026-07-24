@@ -31,10 +31,20 @@ stages:
             archiveType: 'zip'
             archiveFile: 'InventoryAPI_$(Build.BuildId).zip'
             replaceExistingArchive: true
+        - script: |
+            echo "Sources:"
+            ls -R $(Build.SourcesDirectory)
+        - script: |
+            echo "Binaries:"
+            ls -R $(Build.BinariesDirectory)
+
+        - script: |
+            echo "Artifacts:"
+            ls -R $(Build.ArtifactStagingDirectory)
         - task: PublishPipelineArtifact@1
           inputs:
             targetPath: '$(Build.ArtifactStagingDirectory)'
-            artifact: 'InventoryAPI_$(Build.BuildId).zip'
+            artifact: 'artifact'
             publishLocation: 'pipeline'
   - stage: DeployDev
     jobs:
