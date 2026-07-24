@@ -1,2 +1,0 @@
-# azurePipelinesLearn
-Learning Azure Pipelines
