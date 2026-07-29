@@ -38,12 +38,12 @@ stages:
                   inputs:
                     buildType: current
                     artifactName: manifests
-                    targetPath: '$(Pipeline.Workspace)'
+                    targetPath: '$(Pipeline.Workspace)/manifests'
                 - task: Bash@3
                   inputs:
                     targetType: inline
                     script: |
-                      kubectl apply -f $(Pipeline.Workspace)/*.yaml
+                      kubectl apply -f $(Pipeline.Workspace)/manifests/
                       kubectl rollout status deployment/inventory-api
   
   - stage: ValidateDeployment
