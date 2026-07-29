@@ -25,51 +25,35 @@ stages:
             targetPath: $(Build.ArtifactStagingDirectory)
             artifact: manifests
             publishLocation: 'pipeline'
-  - stage: DownloadingArtifacts
+
+  - stage: DeployDev
     jobs:
-      - job: downloadJob
+      - deployment: DeployInventory
+        environment: dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    buildType: current
+                    artifactName: manifests
+                    targetPath: '$(Pipeline.Workspace)'
+                - task: Bash@3
+                  inputs:
+                    targetType: inline
+                    script: |
+                      kubectl apply -f $(Pipeline.Workspace)/*.yaml
+                      kubectl rollout status deployment/inventory-api
+  
+  - stage: ValidateDeployment
+    jobs:
+      - job: ValidateJob
         steps:
-        - task: DownloadPipelineArtifact@2
-          inputs:
-            buildType: current
-            artifactName: manifests
-            targetPath: '$(Pipeline.Workspace)'
-        - task: Bash@3 
+        - task: Bash@3
           inputs:
             targetType: inline
-            script: find $(Pipeline.Workspace)
-        - task: Kubernetes@1
-          inputs:
-            connectionType: 'Kubernetes Service Connection'
-            kubernetesServiceEndpoint: 'k8s-cluster'
-            command: login
-        - task: Kubernetes@1
-          inputs:
-            connectionType: 'Kubernetes Service Connection'
-            kubernetesServiceEndpoint: 'k8s-cluster'
-            command: get
-            arguments: nodes
-        - task: Kubernetes@1
-          inputs:
-            connectionType: 'Kubernetes Service Connection'
-            kubernetesServiceEndpoint: 'k8s-cluster'
-            command: apply
-            arguments: -f $(Pipeline.Workspace)/*.yaml
-        - task: Kubernetes@1
-          inputs:
-            connectionType: 'Kubernetes Service Connection'
-            kubernetesServiceEndpoint: 'k8s-cluster'
-            command: get
-            arguments: deployments
-        - task: Kubernetes@1
-          inputs:
-            connectionType: 'Kubernetes Service Connection'
-            kubernetesServiceEndpoint: 'k8s-cluster'
-            command: get
-            arguments: pods
-        - task: Kubernetes@1
-          inputs:
-            connectionType: 'Kubernetes Service Connection'
-            kubernetesServiceEndpoint: 'k8s-cluster'
-            command: get
-            arguments: svc
+            script: |
+              kubectl get pods
+              kubectl get svc
+              kubectl describe deployment inventory-api
