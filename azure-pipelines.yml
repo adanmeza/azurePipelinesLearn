@@ -4,7 +4,7 @@ trigger:
       - main
 
 pool:
-  name: Default
+  name: kubernetes-cluster
 
 stages:
   - stage: ShowingManifests
@@ -41,35 +41,35 @@ stages:
         - task: Kubernetes@1
           inputs:
             connectionType: 'Kubernetes Service Connection'
-            kubernetesServiceEndpoint: 'k8s-lab'
+            kubernetesServiceEndpoint: 'k8s-cluster'
             command: login
         - task: Kubernetes@1
           inputs:
             connectionType: 'Kubernetes Service Connection'
-            kubernetesServiceEndpoint: 'k8s-lab'
+            kubernetesServiceEndpoint: 'k8s-cluster'
             command: get
             arguments: nodes
         - task: Kubernetes@1
           inputs:
             connectionType: 'Kubernetes Service Connection'
-            kubernetesServiceEndpoint: 'k8s-lab'
+            kubernetesServiceEndpoint: 'k8s-cluster'
             command: apply
             arguments: -f $(Pipeline.Workspace)/*.yaml
         - task: Kubernetes@1
           inputs:
             connectionType: 'Kubernetes Service Connection'
-            kubernetesServiceEndpoint: 'k8s-lab'
+            kubernetesServiceEndpoint: 'k8s-cluster'
             command: get
             arguments: deployments
         - task: Kubernetes@1
           inputs:
             connectionType: 'Kubernetes Service Connection'
-            kubernetesServiceEndpoint: 'k8s-lab'
+            kubernetesServiceEndpoint: 'k8s-cluster'
             command: get
             arguments: pods
         - task: Kubernetes@1
           inputs:
             connectionType: 'Kubernetes Service Connection'
-            kubernetesServiceEndpoint: 'k8s-lab'
+            kubernetesServiceEndpoint: 'k8s-cluster'
             command: get
             arguments: svc
